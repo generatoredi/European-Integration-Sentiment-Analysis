@@ -1,0 +1,21 @@
+#how i got the variable length to measure how much the process lasts (if it finish earlier for example it means more power for law)
+
+# Load the csv file
+data <- read.csv("OLP_data.csv")
+
+# Define the columns of interest
+cols_of_interest <- c("RES_R1_byCONSIL", "RES_R1_byEP", "RES_R2_byEP", "AGR_AME_R1_byCOM", "AGR_AME_R2_byCOM")
+
+# Create a new column called "length"
+data$length <- apply(data[,cols_of_interest], 1, function(x) {
+  if(all(is.na(x))) {
+    0
+  } else {
+    sum(!is.na(x))
+  }
+})
+
+
+
+
+

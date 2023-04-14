@@ -1,0 +1,29 @@
+#download summaries EP from csv file
+#basically I downloaded all the summaries from the original OLP excel file, it is uninteresting, there are different way to do this
+
+data <- read.csv("OLP_sel.csv")
+text <- data$R1_byEP_sum[!is.na(data$R1_byEP_sum)]
+numb <- data$numb[!is.na(data$R1_byEP_sum)]
+
+for (i in 1:length(text)) {
+  filename <- paste0(numb[i], ".docx")
+  doc <- read_docx() %>% body_add_text(text[i])
+  print(doc, target = filename)
+}
+
+
+
+#how i converted doc to docx after I downloaded them from the OLP.csv
+#same, a conversion of what I have downloaded, there are also other way to do it
+
+dir <- "folder"
+
+files <- list.files(dir, pattern = "*.doc$", full.names = TRUE)
+
+for (file in files) {
+  text <- readLines(file)
+  
+  new_file <- str_replace(file, ".doc$", ".docx")
+  
+  writeLines(text, new_file)
+}
