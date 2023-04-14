@@ -1,0 +1,19 @@
+--------------------------------------------------------------------------------
+#code that i used again for the other summaries in commission and parliament
+
+for (file in docx_files) {
+sample_data <- read_docx(file)
+content <- docx_summary(sample_data)
+law <- content[sapply(strsplit(as.character(content$text),""),length)>5,]
+sentiment <- sentiment_by(as.character(law$text))
+results <- rbind(results, data.frame(file = file, sentiment = sentiment$ave_sentiment))
+}
+
+
+#what code to use when read_docx does not work (EP)
+
+for (file in docx_files) {
++ law <- readLines(file)
++ sentiment <- sentiment_by(as.character(law))
++ results <- rbind(results, data.frame(file = file, sentiment = sentiment$ave_sentiment))
++ }

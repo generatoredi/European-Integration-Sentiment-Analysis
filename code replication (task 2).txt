@@ -1,0 +1,44 @@
+#R SENTIMENT ANALYSIS LOOP THROUGH ALL THE DOCX FILES OF THE LAWS
+#This task can be done for every other step, I used here the proposal docs, then you can do the same by substituting with the others
+#For the parliament I used a doc of all the summaries in the excel file, for the commission response we already had it
+#The first two tasks are the most important, try with a few docx proposal in your R working directory and see how it goes
+#Remember, I had problem if a lot of package are open, try to do this with only sentimentr and officer open
+
+library(sentimentr)
+library(officer)
+
+# Set the path to the folder containing the docx files
+folder_path <- "C:\\Users\\dario.marino5\\Documents\\R\\"
+
+# Get a list of all the docx files in the folder (you have to put all your docs in the working folder)
+docx_files <- list.files(path = folder_path, pattern = "\\.docx$", full.names = TRUE)
+
+# Create an empty data frame to store the results
+results <- data.frame(file = character(0), sentiment = numeric(0))
+
+# Loop over the list of files
+for (file in docx_files) {
+  # Read the docx file
+  sample_data <- read_docx(file)
+
+  # Extract the content and create a summary
+  content <- docx_summary(sample_data)
+  law <- content[sapply(strsplit(as.character(content$text),""),length)>5,]
+
+  # Calculate the sentiment of the summary
+  sentiment <- sentiment_by(as.character(law$text))
+
+  # Add a row to the data frame with the results for this file
+  results <- rbind(results, data.frame(file = file, sentiment = sentiment$ave_sentiment))
+}
+
+# View the results data frame
+View(results)
+
+
+
+# Group the rows by the file column and calculate the mean of the sentiment column for each group, excluding rows with a sentiment value of zero
+results_avg_no_zeros <- aggregate(sentiment ~ file, data = results[results$sentiment != 0, ], mean)
+
+# View the resulting data frame
+View(results_avg_no_zeros)
